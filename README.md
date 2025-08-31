@@ -29,22 +29,23 @@ The memory of the compromised Windows VM was captured using DumpIt, producing a 
 To list all running processes at the time of acquisition, the following command was executed:
 vol -f image/mem.raw windows.pslist | tee outputs/02_pslist.txt
 
-    ![Create User](./screenshots/image1.png)
-An unusual process named TrustMe.exe was discovered, suggesting potential malicious activity.
+    ![Create User](image1.png)
+
+    An unusual process named TrustMe.exe was discovered, suggesting potential malicious activity.
 
 3. Process Tree Analysis:
 To visualize parent-child relationships of processes, the following command was run:
 vol -f image/mem.raw windows.pstree | tee outputs/03_pstree.txt
 The process tree revealed TrustMe.exe and its associated process chain, further confirming suspicious activity.
 
-    ![Create User](./screenshots/image2.png)
+    ![Create User](image2.png)
 
 4. File Scan for Persistence:
 To identify files linked to persistence mechanisms, a memory-wide file scan was performed using the command
 vol -f image/memory.dmp windows.filescan | grep -i "startup" > outputs/startup_files.txt
 The presence of TrustMe.exe within the Startup folder confirmed that the malware was configured to execute automatically on system reboot.
 
-    ![Create User](./screenshots/image3.png)
+    ![Create User](image3.png)
 
 5. Registry Analysis (Services Key):
 To investigate persistence via services, the Services registry hive was extracted and reviewed:
@@ -52,14 +53,14 @@ vol -f image/memory.dmp windows.registry.printkey --key "ControlSet001\Services"
 grep -i TrustMe outputs/services_registry.txt
 Registry entries referencing TrustMe.exe were identified under ControlSet001\Services, indicating another persistence mechanism.
 
-     ![Create User](./screenshots/image4.png)
+     ![Create User](image4.png)
 
 6. Targeted File Scan:
 To directly confirm the presence of the malware, a targeted scan was performed:
 vol -f image/memory.dmp windows.filescan | grep -i TrustMe
 Multiple references to TrustMe.exe were observed, corroborating its presence and persistence configuration.
 
-    ![Create User](./screenshots/image5.png)
+    ![Create User](image5.png)
 
 ## Findings
 Suspicious Process: TrustMe.exe was running at the time of memory capture.
